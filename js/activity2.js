@@ -25,7 +25,6 @@ Promise.all([
 	d3.json("data/airports.json"),
 	d3.json("data/world-110m.json"),
 ]).then((data)=>{
-	// con
 	console.log(data, 'data')
 	let airports = data[0];
 	let worldmap = data[1];
@@ -39,9 +38,10 @@ Promise.all([
 	svg.selectAll("path")
         .data(world.filter(d=>d.properties.name!='Antarctica'))
 		.enter()
-        .append("path")
+		.append("path")
+		.attr("class", "map")
 		.attr("d", path)
-		  .attr('stroke', 'white');
+		.attr('stroke', 'white');
 
 	//DRAW THE NODES (SVG CIRCLE)	  
 	let node = svg.selectAll(".node")
@@ -57,23 +57,20 @@ Promise.all([
 		   });
 
 	node.append("title")
-		//    .attr("fill", "blue")
 		   .text(function(d) { return d.name; });
 	
+	console.log(airports.nodes[0].longitude);
+		   
+	
 	//DRAW THE LINKS (SVG LINE)
-	svg.selectAll('.link')
+	let link = svg.selectAll('.link')
 		   .data(airports.links)
 		   .enter()
 		   .append('line')
-		   .attr("stroke-width", 2)
-		   .attr("stroke", "maroon");
+		   .attr('x1',function(d) { return projection([((airports.nodes[d.source]).longitude),((airports.nodes[d.source]).latitude)])[0]; })
+		   .attr('y1',function(d) { return projection([((airports.nodes[d.source]).longitude),((airports.nodes[d.source]).latitude)])[1]; })
+		   .attr('x2',function(d) { return projection([((airports.nodes[d.target]).longitude),((airports.nodes[d.target]).latitude)])[0]; })
+		   .attr('y2',function(d) { return projection([((airports.nodes[d.target]).longitude),((airports.nodes[d.target]).latitude)])[1]; })
+		//    .attr("stroke-width", 1)
+		   .attr("stroke", "yellow");
 });
-
-// 2a) DEFINE 'NODES' AND 'EDGES'
-// 2b) START RUNNING THE SIMULATION
-
-// 3) 
-
-
-
-// 5) LISTEN TO THE 'TICK' EVENT AND UPDATE THE X/Y COORDINATES FOR ALL ELEMENTS
